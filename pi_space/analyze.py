@@ -12,7 +12,7 @@ offset = [(0,500),(700,500),(1400,500)] # window locations
 ## Setup
 # --------------------------------------------------
 # Parameters
-bs_flag = False              # Perform Bootstrap analysis?
+bs_flag = True              # Perform Bootstrap analysis?
 n_resamp = int(1e3)         # Number of times to do bootstrap resample
 np.set_printoptions(precision=2,linewidth=100)
 
@@ -34,25 +34,25 @@ C  = G.T.dot(G)
 W,L,_ = svd(C)
 
 # Helper functions
-def bootstrap_resample(X, n=None):
-    """ Bootstrap resample an array_like
-    http://nbviewer.jupyter.org/gist/aflaxman/6871948
-    Parameters
-    ----------
-    X : array_like
-      data to resample
-    n : int, optional
-      length of resampled array, equal to len(X) if n==None
-    Results
-    -------
-    returns X_resamples
-    """
-    if n == None:
-        n = len(X)
+# def bootstrap_resample(X, n=None):
+#     """ Bootstrap resample an array_like
+#     http://nbviewer.jupyter.org/gist/aflaxman/6871948
+#     Parameters
+#     ----------
+#     X : array_like
+#       data to resample
+#     n : int, optional
+#       length of resampled array, equal to len(X) if n==None
+#     Results
+#     -------
+#     returns X_resamples
+#     """
+#     if n == None:
+#         n = len(X)
         
-    resample_i = np.floor(np.random.rand(n)*len(X)).astype(int)
-    X_resample = X[resample_i]
-    return X_resample
+#     resample_i = np.floor(np.random.rand(n)*len(X)).astype(int)
+#     X_resample = X[resample_i]
+#     return X_resample
 
 ## Bootstrap resample
 # --------------------------------------------------
@@ -61,7 +61,7 @@ if bs_flag:
     D_all = []
     for ind in range(n_resamp):
         # Perform the resampling
-        G_r = bootstrap_resample(G)
+        G_r = ut.bootstrap_resample(G)
         # Compute AS
         C_r = G_r.T.dot(G_r)
         W_r,L_r,_ = svd(C_r)
