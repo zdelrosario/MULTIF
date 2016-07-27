@@ -12,7 +12,7 @@ offset = [(0,500),(700,500),(1400,500)] # window locations
 ## Setup
 # --------------------------------------------------
 # Parameters
-bs_flag = True              # Perform Bootstrap analysis?
+bs_flag = False             # Perform Bootstrap analysis?
 n_resamp = int(1e3)         # Number of times to do bootstrap resample
 np.set_printoptions(precision=2,linewidth=100)
 
@@ -23,6 +23,7 @@ D = np.array([ [ 0, 1, 1, 0, 1, 0, 1],  # M
                [ 0,-3,-2, 0,-2,-1,-2],  # T
                [ 1,-1, 0, 1, 0, 0, 0] ])# Theta
 N = ut.null(D)
+#A = 
 
 # Load data
 df = pd.read_csv("grads.csv")
@@ -125,12 +126,17 @@ if bs_flag:
 
 ## Dimensional Analysis
 # --------------------------------------------------
+# Check subspace inclusion
+
 # Find intersection of DA space and AS
-W_1 = W[:,:5]
+W_1 = W[:,:4]
 N_c = ut.comp(N)
 
 B_1 = ut.inter(W_1,N)           # Dimensionless parameters
 B_2 = ut.inter(W_1,N_c)         # Dimensional factor
+
+d_1 = D.dot(B_2[:,0])
+d_2 = D.dot(B_2[:,1])
 
 # Show all plots
 plt.show()
