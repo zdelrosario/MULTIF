@@ -41,3 +41,6 @@ Makefile
 ./example/*.dat
 ./example/config_CFD.cfg
 ./example/*.csv
+
+# Specific files
+multif/meshutils/python.h
