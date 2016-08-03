@@ -60,8 +60,8 @@ def grad(x,f,f0=None,h=_epsilon):
         x = np.array(x)
 
     # Calculate gradient
-    dF = np.empty(np.size(x)) # Reserve space
-    E  = np.eye(np.size(x))   # Standard basis
+    dF = np.empty(np.size(x))   # Reserve space
+    E  = np.eye(np.size(x))     # Standard basis
     for i in range(np.size(x)):
         dF[i] = (f(x+E[:,i]*h)-f0)/h
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     fun = lambda q: run_nozzle(xfn(q))
 
     # Monte Carlo method
-    Q_samp = 2*np.random.random((n_samp,m))
+    Q_samp = 2*np.random.random((n_samp,m)) - 1
     F_samp = []
     G_samp = []
     for ind in range(n_samp):

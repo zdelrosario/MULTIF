@@ -19,7 +19,7 @@ np.set_printoptions(precision=2,linewidth=100)
 # Dimensional matrix
 # Column order = {T_0, K, P_inf, T_inf, E, alpha, P_0}
 D = np.array([ [ 0, 1, 1, 0, 1, 0, 1],  # M
-               [ 0, 2,-1, 0,-1, 2,-1],  # L
+               [ 0, 1,-1, 0,-1, 2,-1],  # L
                [ 0,-3,-2, 0,-2,-1,-2],  # T
                [ 1,-1, 0, 1, 0, 0, 0] ])# Theta
 N = ut.null(D)
@@ -33,27 +33,6 @@ m  = G.shape[1]
 # Compute AS
 C  = G.T.dot(G)
 W,L,_ = svd(C)
-
-# Helper functions
-# def bootstrap_resample(X, n=None):
-#     """ Bootstrap resample an array_like
-#     http://nbviewer.jupyter.org/gist/aflaxman/6871948
-#     Parameters
-#     ----------
-#     X : array_like
-#       data to resample
-#     n : int, optional
-#       length of resampled array, equal to len(X) if n==None
-#     Results
-#     -------
-#     returns X_resamples
-#     """
-#     if n == None:
-#         n = len(X)
-        
-#     resample_i = np.floor(np.random.rand(n)*len(X)).astype(int)
-#     X_resample = X[resample_i]
-#     return X_resample
 
 ## Bootstrap resample
 # --------------------------------------------------
@@ -126,17 +105,35 @@ if bs_flag:
 
 ## Dimensional Analysis
 # --------------------------------------------------
-# Check subspace inclusion
+# Check subspace inclusion -- TODO
 
-# Find intersection of DA space and AS
-W_1 = W[:,:4]
+# Define subspaces
+W_1 = W[:,:5]
 N_c = ut.comp(N)
+# Define projection operators
+P_N = N.dot(N.T)
+P_Nc= N_c.dot(N_c.T)
+# Compute subspaces
+B_dim = ut.inter(N_c,W_1)       # Dimensional factor
+B_c,R_c = qr(np.concatenate((B_dim,W_1),axis=1))
+B_c = B_c[:,1:5]
 
-B_1 = ut.inter(W_1,N)           # Dimensionless parameters
-B_2 = ut.inter(W_1,N_c)         # Dimensional factor
+B_1 = P_N.dot(W_1);  r_1 = np.linalg.matrix_rank(B_1)  
+B_2 = P_Nc.dot(W_1); r_2 = np.linalg.matrix_rank(B_2)  
 
-d_1 = D.dot(B_2[:,0])
-d_2 = D.dot(B_2[:,1])
+B_1,_ = qr(B_1); B_1 = B_1[:,:r_1]
+B_2,_ = qr(B_2); B_2 = B_2[:,:r_2]
+
+dim_all= D.dot(W)
+dim_as = D.dot(W_1)
+
+# Console printback
+print("dim_all = \n{}".format(dim_all))
+print("dim_as = \n{}".format(dim_as))
+
+print("\nThe following rank should be 1...")
+print("Rank(dim_as) = {}".format(np.linalg.matrix_rank(dim_as)))
+
 
 # Show all plots
 plt.show()
