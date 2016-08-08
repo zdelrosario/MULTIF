@@ -15,6 +15,7 @@ offset = [(0,500),(700,500),(1400,500)] # window locations
 bs_flag = False             # Perform Bootstrap analysis?
 n_resamp = int(1e3)         # Number of times to do bootstrap resample
 np.set_printoptions(precision=2,linewidth=100)
+tol = 1e-3                      # Tolerance for matrix rank calculation
 
 # Dimensional matrix
 # Column order = {T_0, K, P_inf, T_inf, E, alpha, P_0}
@@ -23,7 +24,8 @@ D = np.array([ [ 0, 1, 1, 0, 1, 0, 1],  # M
                [ 0,-3,-2, 0,-2,-1,-2],  # T
                [ 1,-1, 0, 1, 0, 0, 0] ])# Theta
 N = ut.null(D)
-#A = 
+u = np.array([1,1,-2,0])        # Units for thrust
+u_a = np.array([0,2,0,0])       # Units for area
 
 # Load data
 df = pd.read_csv("grads.csv")
@@ -107,33 +109,28 @@ if bs_flag:
 # --------------------------------------------------
 # Check subspace inclusion -- TODO
 
-# Define subspaces
-W_1 = W[:,:5]
-N_c = ut.comp(N)
-# Define projection operators
-P_N = N.dot(N.T)
-P_Nc= N_c.dot(N_c.T)
-# Compute subspaces
-B_dim = ut.inter(N_c,W_1)       # Dimensional factor
-B_c,R_c = qr(np.concatenate((B_dim,W_1),axis=1))
-B_c = B_c[:,1:5]
+# Select the active directions
+as_dim = ut.as_dim(L)
+W_1 = W[:,:as_dim]
+# Compute dimensions
+dim = D.dot(W_1)
+rnk = np.linalg.matrix_rank(dim,tol=tol) 
 
-B_1 = P_N.dot(W_1);  r_1 = np.linalg.matrix_rank(B_1)  
-B_2 = P_Nc.dot(W_1); r_2 = np.linalg.matrix_rank(B_2)  
+# Check that thrust is in dimensions
+t_res = ut.incl(ut.col(u),dim)
+a_res = ut.incl(ut.col(u_a),dim)
 
-B_1,_ = qr(B_1); B_1 = B_1[:,:r_1]
-B_2,_ = qr(B_2); B_2 = B_2[:,:r_2]
+# Project out the dimensions of thrust
+Qtmp,Rtmp = qr(np.concatenate((ut.col(u),dim),axis=1))
+Qc = Qtmp[:,1:rnk]; Qc = Qc / Qc[0]
+Qtmp,Rtmp = qr(np.concatenate((ut.col(u_a),Qc),axis=1))
+Qc2= Qtmp[:,2:rnk]
 
-dim_all= D.dot(W)
-dim_as = D.dot(W_1)
-
-# Console printback
-print("dim_all = \n{}".format(dim_all))
-print("dim_as = \n{}".format(dim_as))
-
-print("\nThe following rank should be 1...")
-print("Rank(dim_as) = {}".format(np.linalg.matrix_rank(dim_as)))
-
+# Console printout
+print("dim = \n{}".format(dim))
+print("rank(dim) = {}".format(rnk))
+print("t_res = {}".format(t_res))
+print("a_res = {}".format(a_res))
 
 # Show all plots
 plt.show()

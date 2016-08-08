@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyutil.numeric as ut
 from numpy.linalg import norm
-from scipy.linalg import svd
+from scipy.linalg import svd, qr
 from copy import copy
 
 ## Setup
@@ -18,6 +18,7 @@ n_samp = int(1e2)
 par = [0,1,3,4,5,6]             # Skip A_0
 m   = len(par)
 tol = 1e-3                      # Tolerance for matrix_rank
+u   = np.array([1,1,-2])        # Units for thrust
 
 # Make nominal values global, len=7
 P_0 = 101e3                     # Freestream pressure, Pa
@@ -104,9 +105,17 @@ print("L = {}".format(L))
 D = np.array(dim_mat)[:,par]    # Take only used parameters
 N = ut.null(D)
 
+# 
 as_dim = ut.as_dim(L)
 W_1 = W[:,:as_dim]
 dim = D.dot(W_1)
+rnk = np.linalg.matrix_rank(dim,tol=tol) 
 
+# Project out the dimensions of thrust
+Qtmp,Rtmp = qr(np.concatenate((ut.col(u),dim),axis=1))
+Qc = Qtmp[:,1:rnk]; Qc = Qc / Qc[0]
+
+
+# Console printout
 print("dim = \n{}".format(dim))
-print("rank(dim) = {}".format(np.linalg.matrix_rank(W_1,tol=tol)))
+print("rank(dim) = {}".format(rnk))
