@@ -1,5 +1,5 @@
 #include "meshutils.h"
-#include "Python.h"
+#include "python.h"
 
 int py_ConvertGMFToSU2( char *MshNam, char *SolNam, char *OutNam ) 
 {

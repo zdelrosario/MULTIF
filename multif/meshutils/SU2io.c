@@ -75,7 +75,7 @@ int AddSU2MeshSize(char *FilNam, int *SizMsh)
 			printf("  ## ERROR : AddSU2MeshSize: Unknown element type %d\n", typ);
 			return 0;
 		}
-		fgets (str, sizeof str, FilHdl);
+		fgets (str, 100000 , FilHdl);
   }//for iElt
 	
  	rewind(FilHdl);
@@ -119,7 +119,7 @@ int AddSU2MeshSize(char *FilNam, int *SizMsh)
 				printf("  ## ERROR : AddSU2MeshSize : Unknown boundary element type %d\n", typ);
 				return 0;
 			}
-	  	fgets (str, sizeof str, FilHdl);
+	  	fgets (str, 100000 , FilHdl);
 		}
 		
 	}
@@ -180,7 +180,7 @@ int GetSU2KeywordValue (FILE *FilHdl, char *Kwd)
 		fscanf(FilHdl, "%d", &buf);
 	}
 	
-	fgets (str, sizeof str, FilHdl);
+	fgets (str, 100000, FilHdl);
 	
 	
 	return buf;
@@ -219,7 +219,7 @@ int GetSU2KeywordValueStr (FILE *FilHdl, char *Kwd, char *StrVal)
 		sprintf(StrVal, "%s", buf);
 	}
 	
-	fgets (str, sizeof str, FilHdl);
+	fgets (str, 100000, FilHdl);
 	
 	return 1;
 }
@@ -242,7 +242,7 @@ int LoadSU2Elements(FILE *FilHdl, Mesh *Msh)
 	}while( (res != EOF) && strcmp(str, "NELEM=") );
 	
 	fscanf(FilHdl, "%d", &NbrElt);
-  fgets (str, sizeof str, FilHdl);
+  fgets (str, 100000 , FilHdl);
 	
   idx=0;
 	
@@ -430,7 +430,7 @@ int LoadSU2Elements(FILE *FilHdl, Mesh *Msh)
 			return 0;
 		}
     
-    fgets (str, sizeof str, FilHdl); 
+    fgets (str, 100000 , FilHdl); 
 
   }//for iElt
 
@@ -442,7 +442,7 @@ int LoadSU2Elements(FILE *FilHdl, Mesh *Msh)
 	//	res = fscanf(FilHdl, "%s", str);
 	//}while( (res != EOF) && strcmp(str, "NMARK=") );
 	//fscanf(FilHdl, "%d", &NbrMark);
-	//fgets (str, sizeof str, FilHdl); 
+	//fgets (str, 100000 , FilHdl); 
 	
 	rewind(FilHdl);
  	NbrMark = GetSU2KeywordValue (FilHdl, "NMARK=");
@@ -540,7 +540,7 @@ int LoadSU2Elements(FILE *FilHdl, Mesh *Msh)
 				printf("  ## ERROR : Unknown element type %d\n", typ);
 				return 0;
 			}
-			fgets (str, sizeof str, FilHdl);
+			fgets (str, 100000 , FilHdl);
 			
     }
 	}
@@ -747,7 +747,7 @@ int LoadSU2Vertices(FILE *FilHdl, Mesh *Msh)
     }
     
     fscanf(FilHdl, "%d", &ref);
-    fgets (str, sizeof str, FilHdl);
+    fgets (str, 100000 , FilHdl);
     
 		AddVertex(Msh, iVer, crd);
   }

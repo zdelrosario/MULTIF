@@ -38,8 +38,6 @@ void  AddEdge(Mesh *Msh, int idx, int *is, int ref);
 void  AddHexahedron(Mesh *Msh, int idx, int *is, int ref);
 void  AddQuadrilateral(Mesh *Msh, int idx, int *is, int ref);
 void  AddTetrahedron(Mesh *Msh, int idx, int *is, int ref);
-void  AddPyramid(Mesh *Msh, int idx, int *is, int ref);
-void  AddPrism(Mesh *Msh, int idx, int *is, int ref);
 void  AddTriangle(Mesh *Msh, int idxTri, int *is, int ref);
 void  AddVertex(Mesh *Msh, int idxVer, double *Crd);
 int   imin(int n, int *idx);
@@ -56,7 +54,7 @@ int Extraction (Options *mshopt);
 int OutputMach (Options *mshopt);
 
 //--- option.c
-Options* AllocOptions(void);
+Options* AllocOptions();
 int      CheckOptions (Options *mshopt);
 int      GetBasNam (char *InpNam, char *BasNam);
 void     PrintOptions (Options *mshopt);
@@ -64,7 +62,7 @@ void     PrintOptions (Options *mshopt);
 //--- parser.c
 int  GetInputFileType (char *FilNam);
 int  ParseCommandLine (Options *mshopt,int argc, char *argv[]);
-void Usage(void);
+void Usage();
 
 //--- SU2io.c
 int  AddSU2MeshSize (char *FilNam, int *SizMsh) ;
