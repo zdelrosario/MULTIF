@@ -121,7 +121,7 @@ if __name__ == "__main__":
     alp_l = X_nom[26] / fac; alp_u = X_nom[26] * fac
     P0_l  = X_nom[27] / fac; P0_u  = X_nom[27] * fac
     rt_l  = 1e-3; rt_u = +0.2
-    re_l  = 1e-3; rt_u = +0.2 
+    re_l  = 1e-3; re_u = +0.2 
 
     X_l = np.array([T0_l,K_l,Pinf_l,Tinf_l,E_l,alp_l,P0_l,rt_l,re_l])
     X_u = np.array([T0_u,K_u,Pinf_u,Tinf_u,E_u,alp_u,P0_u,rt_u,re_u])
