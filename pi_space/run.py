@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from numpy.linalg import norm
 from scipy.linalg import svd
+from math import exp
 
 ## Setup
 # --------------------------------------------------
@@ -39,8 +40,22 @@ X_nom = np.array([2.124000000000000e-01,# Spline control
                   2.0e-6,               # alpha
                   240000])              # P_0
 
+
 ## Function definitions
 # --------------------------------------------------
+ind_t = 10
+ind_e = 16
+cor   = 0.5
+
+def spline_points(r_t,r_e):
+    """Compute the spline points based on
+    throat and exit radii
+    """
+    res = np.zeros(21)
+    for i in range(21):
+        res[i] = r_t*exp(-(i-ind_t)**2/cor) + r_e*exp(-(i-ind_e)**2/cor)
+    return res + X_nom[:21]    
+
 _epsilon = np.sqrt(np.finfo(float).eps)
 
 def grad(x,f,f0=None,h=_epsilon):
@@ -91,10 +106,10 @@ def run_nozzle(w):
 # --------------------------------------------------
 if __name__ == "__main__":
     # Dimension of problem
-    m = 7  # Inlet flow conditions
+    m = 7+2  # Inlet flow conditions + nozzle radii
 
     # Fixed spline parameters
-    x_geo = X_nom[:21]
+    # x_geo = X_nom[:21]
 
     # Parameter bounds
     fac = 1.15
@@ -105,16 +120,24 @@ if __name__ == "__main__":
     E_l   = X_nom[25] / fac; E_u   = X_nom[25] * fac
     alp_l = X_nom[26] / fac; alp_u = X_nom[26] * fac
     P0_l  = X_nom[27] / fac; P0_u  = X_nom[27] * fac
+    rt_l  = 1e-3; rt_u = +0.2
+    re_l  = 1e-3; rt_u = +0.2 
 
-    X_l = np.array([T0_l,K_l,Pinf_l,Tinf_l,E_l,alp_l,P0_l])
-    X_u = np.array([T0_u,K_u,Pinf_u,Tinf_u,E_u,alp_u,P0_u])
+    X_l = np.array([T0_l,K_l,Pinf_l,Tinf_l,E_l,alp_l,P0_l,rt_l,re_l])
+    X_u = np.array([T0_u,K_u,Pinf_u,Tinf_u,E_u,alp_u,P0_u,rt_u,re_u])
 
     # Log-Parameter bounds
     logq_l = np.log(X_l); logq_u = np.log(X_u)
     # Log-Objective and gradient
     xpt = lambda q: np.exp(0.5*(q+1) * (logq_u-logq_l) + logq_l)
-    xfn = lambda q: np.concatenate((x_geo,xpt(q)))
-    fun = lambda q: run_nozzle(xfn(q))
+    # xfn = lambda q: np.concatenate((x_geo,xpt(q)))
+    # fun = lambda q: run_nozzle(xfn(q))
+    def fun(q):
+        x = xpt(q)
+        flow_var = x[:7]
+        rad = x[7:]
+        noz_var  = spline_points(rad[0],rad[1])
+        run_nozzle( np.concatenate((noz_var,flow_var)) )
 
     # Monte Carlo method
     Q_samp = 2*np.random.random((n_samp,m)) - 1
