@@ -79,8 +79,8 @@ if __name__ == "__main__":
     # Parameter bounds
     fac = 1.15
 
-    rt_l  = 0.2600; rt_u  = 0.2900
-    re_l  = 0.3000; re_u  = 0.3300
+    rt_l  = 0.2750; rt_u  = 0.2787
+    re_l  = 0.3048; re_u  = 0.3100
     T0_l  = X_nom[2] / fac; T0_u  = X_nom[2] * fac
     K_l   = X_nom[3] / fac; K_u   = X_nom[3] * fac
     Pinf_l= X_nom[4] / fac; Pinf_u= X_nom[4] * fac

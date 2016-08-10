@@ -42,7 +42,7 @@ def def_nozzle(w):
 # Choose parameter values
 w = np.copy(X_nom)
 w[0] = 0.2750
-w[1] = 0.3060
+w[1] = 0.3100
 
 # Define the nozzles
 noz_base = def_nozzle(X_nom)
