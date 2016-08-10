@@ -8,54 +8,22 @@ from math import exp
 
 ## Setup
 # --------------------------------------------------
-n_samp = int(1e2)
+n_samp = int(1e0)
 
-# Make nominal values global, len=28
-X_nom = np.array([2.124000000000000e-01,# Spline control
-                  2.269000000000000e-01,
-                  2.734000000000000e-01,
-                  3.218000000000000e-01,
-                  3.230000000000000e-01,
-                  3.343000000000000e-01,
-                  3.474000000000000e-01,
-                  4.392000000000000e-01,
-                  4.828000000000000e-01,
-                  5.673000000000000e-01,
-                  6.700000000000000e-01,
-                  3.238000000000000e-01,
-                  2.981000000000000e-01,
-                  2.817000000000000e-01,
-                  2.787000000000000e-01,
-                  2.797000000000000e-01,
-                  2.804000000000000e-01,
-                  3.36000000000000e-01,
-                  2.978000000000000e-01,
-                  3.049000000000000e-01,
-                  3.048000000000000e-01,
-                  945,                  # T_0
-                  8.96,                 # K
-                  60000,                # P_inf
-                  262,                  # T_inf
-                  8.2e10,               # E
-                  2.0e-6,               # alpha
-                  240000])              # P_0
+# Make nominal values global, len=9
+X_nom = np.array([0.2787,       # Throat control point
+                  0.3048,       # Exit control point
+                  945,          # T_0
+                  8.96,         # K
+                  60000,        # P_inf
+                  262,          # T_inf
+                  8.2e10,       # E
+                  2.0e-6,       # alpha
+                  240000])      # P_0
 
 
 ## Function definitions
 # --------------------------------------------------
-ind_t = 10
-ind_e = 16
-cor   = 0.5
-
-def spline_points(r_t,r_e):
-    """Compute the spline points based on
-    throat and exit radii
-    """
-    res = np.zeros(21)
-    for i in range(21):
-        res[i] = r_t*exp(-(i-ind_t)**2/cor) + r_e*exp(-(i-ind_e)**2/cor)
-    return res + X_nom[:21]    
-
 _epsilon = np.sqrt(np.finfo(float).eps)
 
 def grad(x,f,f0=None,h=_epsilon):
@@ -108,37 +76,27 @@ if __name__ == "__main__":
     # Dimension of problem
     m = 7+2  # Inlet flow conditions + nozzle radii
 
-    # Fixed spline parameters
-    # x_geo = X_nom[:21]
-
     # Parameter bounds
     fac = 1.15
-    T0_l  = X_nom[21] / fac; T0_u  = X_nom[21] * fac
-    K_l   = X_nom[22] / fac; K_u   = X_nom[22] * fac
-    Pinf_l= X_nom[23] / fac; Pinf_u= X_nom[23] * fac
-    Tinf_l= X_nom[24] / fac; Tinf_u= X_nom[24] * fac
-    E_l   = X_nom[25] / fac; E_u   = X_nom[25] * fac
-    alp_l = X_nom[26] / fac; alp_u = X_nom[26] * fac
-    P0_l  = X_nom[27] / fac; P0_u  = X_nom[27] * fac
-    rt_l  = 1e-3; rt_u = +0.2
-    re_l  = 1e-3; rt_u = +0.2 
-
-    X_l = np.array([T0_l,K_l,Pinf_l,Tinf_l,E_l,alp_l,P0_l,rt_l,re_l])
-    X_u = np.array([T0_u,K_u,Pinf_u,Tinf_u,E_u,alp_u,P0_u,rt_u,re_u])
+    rt_l  = X_nom[0] / fac; rt_u  = X_nom[0] * fac
+    re_l  = X_nom[1] / fac; re_u  = X_nom[1] * fac
+    T0_l  = X_nom[2] / fac; T0_u  = X_nom[2] * fac
+    K_l   = X_nom[3] / fac; K_u   = X_nom[3] * fac
+    Pinf_l= X_nom[4] / fac; Pinf_u= X_nom[4] * fac
+    Tinf_l= X_nom[5] / fac; Tinf_u= X_nom[5] * fac
+    E_l   = X_nom[6] / fac; E_u   = X_nom[6] * fac
+    alp_l = X_nom[7] / fac; alp_u = X_nom[7] * fac
+    P0_l  = X_nom[8] / fac; P0_u  = X_nom[8] * fac
+    
+    X_l = np.array([rt_l,re_l,T0_l,K_l,Pinf_l,Tinf_l,E_l,alp_l,P0_l])
+    X_u = np.array([rt_u,re_u,T0_u,K_u,Pinf_u,Tinf_u,E_u,alp_u,P0_u])
 
     # Log-Parameter bounds
     logq_l = np.log(X_l); logq_u = np.log(X_u)
     # Log-Objective and gradient
     xpt = lambda q: np.exp(0.5*(q+1) * (logq_u-logq_l) + logq_l)
-    # xfn = lambda q: np.concatenate((x_geo,xpt(q)))
-    # fun = lambda q: run_nozzle(xfn(q))
-    def fun(q):
-        x = xpt(q)
-        flow_var = x[:7]
-        rad = x[7:]
-        noz_var  = spline_points(rad[0],rad[1])
-        run_nozzle( np.concatenate((noz_var,flow_var)) )
-
+    fun = lambda q: run_nozzle(xpt(q))
+    
     # Monte Carlo method
     Q_samp = 2*np.random.random((n_samp,m)) - 1
     F_samp = []
