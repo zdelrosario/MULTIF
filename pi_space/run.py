@@ -8,7 +8,7 @@ from math import exp
 
 ## Setup
 # --------------------------------------------------
-n_samp = int(1e0)
+n_samp = int(1e2)
 
 # Make nominal values global, len=9
 X_nom = np.array([0.2787,       # Throat control point
@@ -79,8 +79,8 @@ if __name__ == "__main__":
     # Parameter bounds
     fac = 1.15
 
-    rt_l  = X_nom[0] / fac; rt_u  = X_nom[0] * fac
-    re_l  = X_nom[1] / fac; re_u  = X_nom[1] * fac
+    rt_l  = 0.2600; rt_u  = 0.2900
+    re_l  = 0.3000; re_u  = 0.3300
     T0_l  = X_nom[2] / fac; T0_u  = X_nom[2] * fac
     K_l   = X_nom[3] / fac; K_u   = X_nom[3] * fac
     Pinf_l= X_nom[4] / fac; Pinf_u= X_nom[4] * fac
