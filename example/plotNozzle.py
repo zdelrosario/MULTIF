@@ -32,4 +32,6 @@ nozzle = multif.nozzle.NozzleSetup( filename, flevel )
 
 x = np.linspace(0,np.max(nozzle.wall.geometry.coefs[0,:]),1000)
 y = nozzle.wall.geometry.radius(x)
+
 plt.plot(x,y)
+plt.show()
