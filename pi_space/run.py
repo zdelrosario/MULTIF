@@ -2,6 +2,8 @@ import multif
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
+
 from numpy.linalg import norm
 from scipy.linalg import svd
 from math import exp
@@ -73,6 +75,8 @@ def run_nozzle(w):
 ## Run script
 # --------------------------------------------------
 if __name__ == "__main__":
+    # Begin code timing
+    t0 = time.time()
     # Dimension of problem
     m = 7+2  # Inlet flow conditions + nozzle radii
 
@@ -116,10 +120,13 @@ if __name__ == "__main__":
     # Compute Active Subspace
     Q,L,_ = svd(C)
 
+    # Complete timing
+    t1 = time.time()
     # Console output
     print("Computation complete!")
     print("L = {}".format(L))
-
+    print("t_exec = {}".format(t1-t0))
+    
     # Save the gradients
     data = pd.DataFrame(G)
     data.to_csv('grads.csv')
