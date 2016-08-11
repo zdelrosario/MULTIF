@@ -61,20 +61,20 @@ if __name__ == "__main__":
     X_u = np.array(X_nom)/fac
 
     # Log-Parameter bounds
-    logq_l = np.log(X_l); logq_u = np.log(X_u)
+    # logq_l = np.log(X_l); logq_u = np.log(X_u)
     # Log-Objective and gradient
-    xpt = lambda q: np.exp(0.5*(q+1) * (logq_u-logq_l) + logq_l)
+    xpt = lambda q: 0.5*( (X_u-X_l)*q + (X_u+X_l) )
     fun = lambda q: fcn(xpt(q))
 
     # Monte Carlo method
-    Q_samp = 2*np.random.random((n_samp,m)) - 1
+    Q_samp = 2*np.random.random((n_samp,m))-1
     F_samp = []
     G_samp = []
     for ind in range(n_samp):
         # Evaluate function at point
         # q = Q_samp[ind]
         f_val = fun(Q_samp[ind])
-        g_val = grad(Q_samp[ind],fun,f0=f_val)*2/(logq_u-logq_l)
+        g_val = grad(Q_samp[ind],fun,f0=f_val)*2/(X_u-X_l)
         # Record values
         F_samp.append(f_val)
         G_samp.append(g_val)
@@ -90,4 +90,4 @@ if __name__ == "__main__":
 
     # Save the gradients
     data = pd.DataFrame(G)
-    data.to_csv('grads.csv')
+    data.to_csv('gradsl.csv')
