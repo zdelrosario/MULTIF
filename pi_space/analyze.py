@@ -20,9 +20,9 @@ tol = 1e-3                      # Tolerance for matrix rank calculation
 # Dimensional matrix
 # Column order = {r_t, r_e, T_0, K, P_inf, T_inf, E, alpha, P_0}
 D = np.array([ [ 0, 0, 0, 1, 1, 0, 1, 0, 1],  # M
-               [ 0, 0, 0, 1,-1, 0,-1, 2,-1],  # L
-               [ 1, 1, 0,-3,-2, 0,-2,-1,-2],  # T
-               [ 0, 0, 1,-1, 0, 1, 0, 0, 0] ])# Theta
+               [ 0, 0, 0, 1,-1, 0,-1, 0,-1],  # L
+               [ 1, 1, 0,-3,-2, 0,-2, 0,-2],  # T
+               [ 0, 0, 1,-1, 0, 1, 0,-1, 0] ])# Theta
 N = ut.null(D)
 u = np.array([1,1,-2,0])        # Units for thrust
 u_a = np.array([0,2,0,0])       # Units for area
